@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.pay.service.app;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
@@ -88,13 +89,16 @@ public interface PayAppService {
      * @return 商户 Map
      */
     default Map<Long, PayAppDO> getAppMap(Collection<Long> ids) {
-        List<PayAppDO> list =  getAppList(ids);
+        if (CollUtil.isEmpty(ids)) {
+            return null;
+        }
+        List<PayAppDO> list = getAppList(ids);
         return CollectionUtils.convertMap(list, PayAppDO::getId);
     }
 
     /**
      * 支付应用的合法性
-     *
+     * <p>
      * 如果不合法，抛出 {@link ServiceException} 业务异常
      *
      * @param id 应用编号
