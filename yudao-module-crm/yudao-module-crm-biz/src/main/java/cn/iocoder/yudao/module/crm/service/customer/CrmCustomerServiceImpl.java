@@ -317,7 +317,7 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
                 return;
             }
             // 情况一：判断如果不存在，在进行插入
-            CrmCustomerDO existCustomer = customerMapper.selectByCustomerName(importCustomer.getName());
+            CrmCustomerDO existCustomer = customerMapper.selectByCustomerName(importCustomer.getMobile());
             if (existCustomer == null) {
                 // 1.1 插入客户信息
                 CrmCustomerDO customer = initCustomer(importCustomer, importReqVO.getOwnerUserId());
