@@ -225,6 +225,40 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
     }
 
     /**
+     * 客户批量转移
+     *
+     * @param reqVO  请求
+     * @param userId 用户编号
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LogRecord(type = CRM_CUSTOMER_TYPE, subType = CRM_CUSTOMER_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
+            success = CRM_CUSTOMER_TRANSFER_SUCCESS)
+    @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#reqVO.id", level = CrmPermissionLevelEnum.OWNER)
+    public void batchTransferCustomer(List<CrmCustomerTransferReqVO> reqVOs, Long userId) {
+        for (CrmCustomerTransferReqVO reqVO : reqVOs) {
+            // 1.1 校验客户是否存在
+            CrmCustomerDO customer = validateCustomerExists(reqVO.getId());
+            // 1.2 校验拥有客户是否到达上限
+            validateCustomerExceedOwnerLimit(reqVO.getNewOwnerUserId(), 1);
+            // 2.1 数据权限转移
+            permissionService.transferPermission(new CrmPermissionTransferReqBO(userId, CrmBizTypeEnum.CRM_CUSTOMER.getType(),
+                    reqVO.getId(), reqVO.getNewOwnerUserId(), reqVO.getOldOwnerPermissionLevel()));
+            // 2.2 转移后重新设置负责人
+            customerMapper.updateById(new CrmCustomerDO().setId(reqVO.getId())
+                    .setOwnerUserId(reqVO.getNewOwnerUserId()).setOwnerTime(LocalDateTime.now()));
+
+            // 2.3 同时转移
+            if (CollUtil.isNotEmpty(reqVO.getToBizTypes())) {
+                transfer(reqVO, userId);
+            }
+
+            // 3. 记录转移日志
+            LogRecordContext.putVariable("customer", customer);
+        }
+    }
+
+    /**
      * 转移客户时，需要额外有【联系人】【商机】【合同】
      *
      * @param reqVO  请求

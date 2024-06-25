@@ -277,6 +277,14 @@ public class CrmCustomerController {
         return success(true);
     }
 
+    @PutMapping("/batchTransfer")
+    @Operation(summary = "批量转移客户")
+    @PreAuthorize("@ss.hasPermission('crm:customer:update')")
+    public CommonResult<Boolean> batchTransferCustomer(@Valid @RequestBody List<CrmCustomerTransferReqVO> reqVO) {
+        customerService.batchTransferCustomer(reqVO, getLoginUserId());
+        return success(true);
+    }
+
     @PutMapping("/lock")
     @Operation(summary = "锁定/解锁客户")
     @PreAuthorize("@ss.hasPermission('crm:customer:update')")

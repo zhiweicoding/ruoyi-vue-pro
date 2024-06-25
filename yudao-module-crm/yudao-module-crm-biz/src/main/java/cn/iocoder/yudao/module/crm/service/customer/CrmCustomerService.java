@@ -145,6 +145,14 @@ public interface CrmCustomerService {
     void transferCustomer(CrmCustomerTransferReqVO reqVO, Long userId);
 
     /**
+     * 客户批量转移
+     *
+     * @param reqVOs  请求
+     * @param userId 用户编号
+     */
+    void batchTransferCustomer(List<CrmCustomerTransferReqVO> reqVOs, Long userId);
+
+    /**
      * 锁定/解锁客户
      *
      * @param lockReqVO 更新信息
