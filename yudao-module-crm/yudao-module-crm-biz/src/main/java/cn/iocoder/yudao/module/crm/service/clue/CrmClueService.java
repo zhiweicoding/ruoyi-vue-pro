@@ -88,7 +88,7 @@ public interface CrmClueService {
      * @param reqVOs 请求
      * @param userId 用户编号
      */
-    void transferClue(List<CrmClueTransferReqVO> reqVOs, Long userId);
+    void batchTransferClue(List<CrmClueTransferReqVO> reqVOs, long id, Long userId);
 
     /**
      * 线索转化为客户

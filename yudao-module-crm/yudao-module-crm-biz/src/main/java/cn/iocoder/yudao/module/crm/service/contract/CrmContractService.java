@@ -61,7 +61,7 @@ public interface CrmContractService {
      * @param reqVOs  请求
      * @param userId 用户编号
      */
-    void batchTransferContract(List<CrmContractTransferReqVO> reqVOs, Long userId);
+    void batchTransferContract(List<CrmContractTransferReqVO> reqVOs,long id, Long userId);
 
     /**
      * 更新合同相关的更进信息

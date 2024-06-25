@@ -204,8 +204,8 @@ public class CrmContactServiceImpl implements CrmContactService {
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTACT_TYPE, subType = CRM_CONTACT_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
             success = CRM_CONTACT_TRANSFER_SUCCESS)
-    @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTACT, bizId = "#reqVO.id", level = CrmPermissionLevelEnum.OWNER)
-    public void batchTransferContact(List<CrmContactTransferReqVO> reqVOs, Long userId) {
+    @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTACT, bizId = "#id", level = CrmPermissionLevelEnum.OWNER)
+    public void batchTransferContact(List<CrmContactTransferReqVO> reqVOs, long id, Long userId) {
         for (CrmContactTransferReqVO reqVO : reqVOs) {
             // 1 校验联系人是否存在
             CrmContactDO contact = validateContactExists(reqVO.getId());

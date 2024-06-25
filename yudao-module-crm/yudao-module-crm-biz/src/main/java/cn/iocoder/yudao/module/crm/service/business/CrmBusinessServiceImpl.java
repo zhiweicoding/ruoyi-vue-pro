@@ -320,8 +320,8 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_BUSINESS_TYPE, subType = CRM_BUSINESS_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
             success = CRM_BUSINESS_TRANSFER_SUCCESS)
-    @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#reqVO.id", level = CrmPermissionLevelEnum.OWNER)
-    public void batchTransferBusiness(List<CrmBusinessTransferReqVO> reqVOs, Long userId) {
+    @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#id", level = CrmPermissionLevelEnum.OWNER)
+    public void batchTransferBusiness(List<CrmBusinessTransferReqVO> reqVOs, long id, Long userId) {
         for (CrmBusinessTransferReqVO reqVO : reqVOs) {
             // 1 校验商机是否存在
             CrmBusinessDO business = validateBusinessExists(reqVO.getId());

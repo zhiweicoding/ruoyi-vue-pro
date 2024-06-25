@@ -234,8 +234,8 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CUSTOMER_TYPE, subType = CRM_CUSTOMER_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
             success = CRM_CUSTOMER_TRANSFER_SUCCESS)
-    @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#reqVO.id", level = CrmPermissionLevelEnum.OWNER)
-    public void batchTransferCustomer(List<CrmCustomerTransferReqVO> reqVOs, Long userId) {
+    @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#reqVoId", level = CrmPermissionLevelEnum.OWNER)
+    public void batchTransferCustomer(List<CrmCustomerTransferReqVO> reqVOs, long reqVoId, Long userId) {
         for (CrmCustomerTransferReqVO reqVO : reqVOs) {
             // 1.1 校验客户是否存在
             CrmCustomerDO customer = validateCustomerExists(reqVO.getId());

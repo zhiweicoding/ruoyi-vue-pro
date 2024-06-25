@@ -60,7 +60,7 @@ public interface CrmContactService {
      * @param reqVOs 请求
      * @param userId 用户编号
      */
-    void batchTransferContact(List<CrmContactTransferReqVO> reqVOs, Long userId);
+    void batchTransferContact(List<CrmContactTransferReqVO> reqVOs,long id, Long userId);
 
     /**
      * 更新指定客户的联系人的负责人

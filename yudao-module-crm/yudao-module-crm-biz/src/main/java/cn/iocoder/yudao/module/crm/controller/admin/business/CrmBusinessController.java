@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.EXPORT;
+import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants.BAD_REQUEST;
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.common.pojo.PageParam.PAGE_SIZE_NONE;
@@ -223,8 +224,13 @@ public class CrmBusinessController {
     @Operation(summary = "商机转移")
     @PreAuthorize("@ss.hasPermission('crm:business:update')")
     public CommonResult<Boolean> batchTransferBusiness(@Valid @RequestBody List<CrmBusinessTransferReqVO> reqVO) {
-        businessService.batchTransferBusiness(reqVO, getLoginUserId());
-        return success(true);
+        if (!reqVO.isEmpty()) {
+            long id = reqVO.get(0).getId();
+            businessService.batchTransferBusiness(reqVO, id, getLoginUserId());
+            return success(true);
+        } else {
+            return CommonResult.error(BAD_REQUEST);
+        }
     }
 
 }

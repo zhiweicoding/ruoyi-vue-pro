@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.EXPORT;
+import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants.BAD_REQUEST;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.common.pojo.PageParam.PAGE_SIZE_NONE;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
@@ -192,8 +193,13 @@ public class CrmContactController {
     @Operation(summary = "批量联系人转移")
     @PreAuthorize("@ss.hasPermission('crm:contact:update')")
     public CommonResult<Boolean> batchTransferContact(@Valid @RequestBody List<CrmContactTransferReqVO> reqVO) {
-        contactService.batchTransferContact(reqVO, getLoginUserId());
-        return success(true);
+        if (!reqVO.isEmpty()) {
+            long id = reqVO.get(0).getId();
+            contactService.batchTransferContact(reqVO, id, getLoginUserId());
+            return success(true);
+        } else {
+            return CommonResult.error(BAD_REQUEST);
+        }
     }
 
     // ================== 关联/取关商机 ===================

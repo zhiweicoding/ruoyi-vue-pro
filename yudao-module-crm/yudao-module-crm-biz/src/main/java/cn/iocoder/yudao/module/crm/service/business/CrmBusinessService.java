@@ -86,10 +86,10 @@ public interface CrmBusinessService {
     /**
      * batch 商机转移
      *
-     * @param reqVOs  请求
+     * @param reqVOs 请求
      * @param userId 用户编号
      */
-    void batchTransferBusiness(List<CrmBusinessTransferReqVO> reqVOs, Long userId);
+    void batchTransferBusiness(List<CrmBusinessTransferReqVO> reqVOs, long id, Long userId);
 
     /**
      * 获得商机
@@ -135,7 +135,7 @@ public interface CrmBusinessService {
 
     /**
      * 获得商机分页
-     *
+     * <p>
      * 数据权限：基于 {@link CrmBusinessDO}
      *
      * @param pageReqVO 分页查询
@@ -146,7 +146,7 @@ public interface CrmBusinessService {
 
     /**
      * 获得商机分页，基于指定客户
-     *
+     * <p>
      * 数据权限：基于 {@link CrmCustomerDO} 读取
      *
      * @param pageReqVO 分页查询
@@ -156,7 +156,7 @@ public interface CrmBusinessService {
 
     /**
      * 获得商机分页，基于指定联系人
-     *
+     * <p>
      * 数据权限：基于 {@link CrmContactDO} 读取
      *
      * @param pageReqVO 分页参数

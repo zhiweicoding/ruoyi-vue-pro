@@ -168,7 +168,7 @@ public class CrmClueServiceImpl implements CrmClueService {
 
         // 2.1 数据权限转移
         crmPermissionService.transferPermission(new CrmPermissionTransferReqBO(userId, CrmBizTypeEnum.CRM_CLUE.getType(),
-                        reqVO.getId(), reqVO.getNewOwnerUserId(), reqVO.getOldOwnerPermissionLevel()));
+                reqVO.getId(), reqVO.getNewOwnerUserId(), reqVO.getOldOwnerPermissionLevel()));
         // 2.2 设置新的负责人
         clueMapper.updateById(new CrmClueDO().setId(reqVO.getId()).setOwnerUserId(reqVO.getNewOwnerUserId()));
 
@@ -186,8 +186,8 @@ public class CrmClueServiceImpl implements CrmClueService {
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CLUE_TYPE, subType = CRM_CLUE_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
             success = CRM_CLUE_TRANSFER_SUCCESS)
-    @CrmPermission(bizType = CrmBizTypeEnum.CRM_CLUE, bizId = "#reqVO.id", level = CrmPermissionLevelEnum.OWNER)
-    public void transferClue(List<CrmClueTransferReqVO> reqVOs, Long userId) {
+    @CrmPermission(bizType = CrmBizTypeEnum.CRM_CLUE, bizId = "#id", level = CrmPermissionLevelEnum.OWNER)
+    public void batchTransferClue(List<CrmClueTransferReqVO> reqVOs, long id, Long userId) {
         for (CrmClueTransferReqVO reqVO : reqVOs) {
             // 1 校验线索是否存在
             CrmClueDO clue = validateClueExists(reqVO.getId());

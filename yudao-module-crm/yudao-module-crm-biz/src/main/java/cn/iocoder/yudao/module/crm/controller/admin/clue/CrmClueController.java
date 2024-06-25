@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.EXPORT;
+import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants.BAD_REQUEST;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.common.pojo.PageParam.PAGE_SIZE_NONE;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertListByFlatMap;
@@ -158,8 +159,13 @@ public class CrmClueController {
     @Operation(summary = "批量线索转移")
     @PreAuthorize("@ss.hasPermission('crm:clue:update')")
     public CommonResult<Boolean> batchTransferClue(@Valid @RequestBody List<CrmClueTransferReqVO> reqVO) {
-        clueService.transferClue(reqVO, getLoginUserId());
-        return success(true);
+        if (!reqVO.isEmpty()) {
+            long id = reqVO.get(0).getId();
+            clueService.batchTransferClue(reqVO, id, getLoginUserId());
+            return success(true);
+        } else {
+            return CommonResult.error(BAD_REQUEST);
+        }
     }
 
     @PutMapping("/transform")

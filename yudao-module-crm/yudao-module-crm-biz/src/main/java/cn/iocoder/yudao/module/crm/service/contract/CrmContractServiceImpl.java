@@ -279,8 +279,8 @@ public class CrmContractServiceImpl implements CrmContractService {
     @Transactional(rollbackFor = Exception.class)
     @LogRecord(type = CRM_CONTRACT_TYPE, subType = CRM_CONTRACT_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
             success = CRM_CONTRACT_TRANSFER_SUCCESS)
-    @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTRACT, bizId = "#reqVO.id", level = CrmPermissionLevelEnum.OWNER)
-    public void batchTransferContract(List<CrmContractTransferReqVO> reqVOs, Long userId) {
+    @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTRACT, bizId = "#id", level = CrmPermissionLevelEnum.OWNER)
+    public void batchTransferContract(List<CrmContractTransferReqVO> reqVOs, long id, Long userId) {
         for (CrmContractTransferReqVO reqVO : reqVOs) {
             // 1. 校验合同是否存在
             CrmContractDO contract = validateContractExists(reqVO.getId());
