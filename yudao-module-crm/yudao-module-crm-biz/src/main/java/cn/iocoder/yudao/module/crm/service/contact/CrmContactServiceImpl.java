@@ -194,6 +194,33 @@ public class CrmContactServiceImpl implements CrmContactService {
         LogRecordContext.putVariable("contact", contact);
     }
 
+    /**
+     * 批量联系人转移
+     *
+     * @param reqVOs 请求
+     * @param userId 用户编号
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LogRecord(type = CRM_CONTACT_TYPE, subType = CRM_CONTACT_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
+            success = CRM_CONTACT_TRANSFER_SUCCESS)
+    @CrmPermission(bizType = CrmBizTypeEnum.CRM_CONTACT, bizId = "#reqVO.id", level = CrmPermissionLevelEnum.OWNER)
+    public void batchTransferContact(List<CrmContactTransferReqVO> reqVOs, Long userId) {
+        for (CrmContactTransferReqVO reqVO : reqVOs) {
+            // 1 校验联系人是否存在
+            CrmContactDO contact = validateContactExists(reqVO.getId());
+
+            // 2.1 数据权限转移
+            permissionService.transferPermission(new CrmPermissionTransferReqBO(userId, CrmBizTypeEnum.CRM_CONTACT.getType(),
+                    reqVO.getId(), reqVO.getNewOwnerUserId(), reqVO.getOldOwnerPermissionLevel()));
+            // 2.2 设置新的负责人
+            contactMapper.updateById(new CrmContactDO().setId(reqVO.getId()).setOwnerUserId(reqVO.getNewOwnerUserId()));
+
+            // 3. 记录转移日志
+            LogRecordContext.putVariable("contact", contact);
+        }
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CrmPermission(bizType = CrmBizTypeEnum.CRM_CUSTOMER, bizId = "#customerId", level = CrmPermissionLevelEnum.OWNER)

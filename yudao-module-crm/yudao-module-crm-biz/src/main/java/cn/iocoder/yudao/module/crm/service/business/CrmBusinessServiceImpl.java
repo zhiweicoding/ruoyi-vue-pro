@@ -310,6 +310,33 @@ public class CrmBusinessServiceImpl implements CrmBusinessService {
         LogRecordContext.putVariable("business", business);
     }
 
+    /**
+     * batch 商机转移
+     *
+     * @param reqVOs 请求
+     * @param userId 用户编号
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LogRecord(type = CRM_BUSINESS_TYPE, subType = CRM_BUSINESS_TRANSFER_SUB_TYPE, bizNo = "{{#reqVO.id}}",
+            success = CRM_BUSINESS_TRANSFER_SUCCESS)
+    @CrmPermission(bizType = CrmBizTypeEnum.CRM_BUSINESS, bizId = "#reqVO.id", level = CrmPermissionLevelEnum.OWNER)
+    public void batchTransferBusiness(List<CrmBusinessTransferReqVO> reqVOs, Long userId) {
+        for (CrmBusinessTransferReqVO reqVO : reqVOs) {
+            // 1 校验商机是否存在
+            CrmBusinessDO business = validateBusinessExists(reqVO.getId());
+
+            // 2.1 数据权限转移
+            permissionService.transferPermission(new CrmPermissionTransferReqBO(userId, CrmBizTypeEnum.CRM_BUSINESS.getType(),
+                    reqVO.getId(), reqVO.getNewOwnerUserId(), reqVO.getOldOwnerPermissionLevel()));
+            // 2.2 设置新的负责人
+            businessMapper.updateOwnerUserIdById(reqVO.getId(), reqVO.getNewOwnerUserId());
+
+            // 记录操作日志上下文
+            LogRecordContext.putVariable("business", business);
+        }
+    }
+
     //======================= 查询相关 =======================
 
     @Override

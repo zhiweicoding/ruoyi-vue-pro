@@ -219,4 +219,12 @@ public class CrmBusinessController {
         return success(true);
     }
 
+    @PutMapping("/batchTransfer")
+    @Operation(summary = "商机转移")
+    @PreAuthorize("@ss.hasPermission('crm:business:update')")
+    public CommonResult<Boolean> batchTransferBusiness(@Valid @RequestBody List<CrmBusinessTransferReqVO> reqVO) {
+        businessService.batchTransferBusiness(reqVO, getLoginUserId());
+        return success(true);
+    }
+
 }

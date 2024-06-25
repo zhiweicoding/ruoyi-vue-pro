@@ -171,6 +171,14 @@ public class CrmContractController {
         return success(true);
     }
 
+    @PutMapping("/batchTransfer")
+    @Operation(summary = "合同转移")
+    @PreAuthorize("@ss.hasPermission('crm:contract:update')")
+    public CommonResult<Boolean> batchTransferContract(@Valid @RequestBody List<CrmContractTransferReqVO> reqVO) {
+        contractService.batchTransferContract(reqVO, getLoginUserId());
+        return success(true);
+    }
+
     @PutMapping("/submit")
     @Operation(summary = "提交合同审批")
     @PreAuthorize("@ss.hasPermission('crm:contract:update')")

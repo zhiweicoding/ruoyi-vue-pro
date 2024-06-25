@@ -84,6 +84,14 @@ public interface CrmBusinessService {
     void transferBusiness(CrmBusinessTransferReqVO reqVO, Long userId);
 
     /**
+     * batch 商机转移
+     *
+     * @param reqVOs  请求
+     * @param userId 用户编号
+     */
+    void batchTransferBusiness(List<CrmBusinessTransferReqVO> reqVOs, Long userId);
+
+    /**
      * 获得商机
      *
      * @param id 编号

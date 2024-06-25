@@ -55,6 +55,14 @@ public interface CrmContactService {
     void transferContact(CrmContactTransferReqVO reqVO, Long userId);
 
     /**
+     * 批量联系人转移
+     *
+     * @param reqVOs 请求
+     * @param userId 用户编号
+     */
+    void batchTransferContact(List<CrmContactTransferReqVO> reqVOs, Long userId);
+
+    /**
      * 更新指定客户的联系人的负责人
      * 数据权限基于 【客户】
      *
@@ -123,7 +131,7 @@ public interface CrmContactService {
 
     /**
      * 获得联系人分页
-     *
+     * <p>
      * 数据权限：基于 {@link CrmContactDO}
      *
      * @param pageReqVO 分页查询
@@ -134,7 +142,7 @@ public interface CrmContactService {
 
     /**
      * 获得联系人分页
-     *
+     * <p>
      * 数据权限：基于 {@link CrmCustomerDO}
      *
      * @param pageVO 分页查询
@@ -144,7 +152,7 @@ public interface CrmContactService {
 
     /**
      * 获得联系人分页
-     *
+     * <p>
      * 数据权限：基于 {@link CrmBusinessDO}
      *
      * @param pageVO 分页查询

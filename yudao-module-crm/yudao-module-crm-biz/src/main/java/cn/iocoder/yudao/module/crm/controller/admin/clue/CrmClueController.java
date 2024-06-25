@@ -154,6 +154,14 @@ public class CrmClueController {
         return success(true);
     }
 
+    @PutMapping("/batchTransfer")
+    @Operation(summary = "批量线索转移")
+    @PreAuthorize("@ss.hasPermission('crm:clue:update')")
+    public CommonResult<Boolean> batchTransferClue(@Valid @RequestBody List<CrmClueTransferReqVO> reqVO) {
+        clueService.transferClue(reqVO, getLoginUserId());
+        return success(true);
+    }
+
     @PutMapping("/transform")
     @Operation(summary = "线索转化为客户")
     @Parameter(name = "id", description = "编号", required = true)

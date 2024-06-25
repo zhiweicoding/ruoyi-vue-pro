@@ -188,6 +188,14 @@ public class CrmContactController {
         return success(true);
     }
 
+    @PutMapping("/batchTransfer")
+    @Operation(summary = "批量联系人转移")
+    @PreAuthorize("@ss.hasPermission('crm:contact:update')")
+    public CommonResult<Boolean> batchTransferContact(@Valid @RequestBody List<CrmContactTransferReqVO> reqVO) {
+        contactService.batchTransferContact(reqVO, getLoginUserId());
+        return success(true);
+    }
+
     // ================== 关联/取关商机 ===================
 
     @PostMapping("/create-business-list")

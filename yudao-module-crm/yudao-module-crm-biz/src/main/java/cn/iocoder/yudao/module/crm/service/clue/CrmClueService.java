@@ -36,8 +36,8 @@ public interface CrmClueService {
     /**
      * 更新线索相关的跟进信息
      *
-     * @param id 编号
-     * @param contactNextTime 下次联系时间
+     * @param id                 编号
+     * @param contactNextTime    下次联系时间
      * @param contactLastContent 最后联系内容
      */
     void updateClueFollowUp(Long id, LocalDateTime contactNextTime, String contactLastContent);
@@ -83,9 +83,17 @@ public interface CrmClueService {
     void transferClue(CrmClueTransferReqVO reqVO, Long userId);
 
     /**
+     * 批量线索转移
+     *
+     * @param reqVOs 请求
+     * @param userId 用户编号
+     */
+    void transferClue(List<CrmClueTransferReqVO> reqVOs, Long userId);
+
+    /**
      * 线索转化为客户
      *
-     * @param id  线索编号
+     * @param id     线索编号
      * @param userId 用户编号
      */
     void transformClue(Long id, Long userId);
