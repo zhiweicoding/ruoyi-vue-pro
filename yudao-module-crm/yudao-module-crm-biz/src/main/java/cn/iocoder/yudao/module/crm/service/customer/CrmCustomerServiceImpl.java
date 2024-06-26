@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.digest.MD5;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -33,11 +35,14 @@ import cn.iocoder.yudao.module.crm.service.permission.bo.CrmPermissionCreateReqB
 import cn.iocoder.yudao.module.crm.service.permission.bo.CrmPermissionTransferReqBO;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.mzt.logapi.context.LogRecordContext;
 import com.mzt.logapi.service.impl.DiffParseFunction;
 import com.mzt.logapi.starter.annotation.LogRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -45,6 +50,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
@@ -87,6 +93,9 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
 
     @Resource
     private AdminUserApi adminUserApi;
+
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -227,7 +236,7 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
     /**
      * 客户批量转移
      *
-     * @param reqVO  请求
+     * @param reqVOs 请求
      * @param userId 用户编号
      */
     @Override
@@ -493,7 +502,7 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
     }
 
     @Transactional(rollbackFor = Exception.class) // 需要 protected 修饰，因为需要在事务中调用
-    protected void putCustomerPool(CrmCustomerDO customer) {
+    public void putCustomerPool(CrmCustomerDO customer) {
         // 1. 设置负责人为 NULL
         int updateOwnerUserIncr = customerMapper.updateOwnerUserIdById(customer.getId(), null);
         if (updateOwnerUserIncr == 0) {
@@ -535,7 +544,18 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
 
     @Override
     public PageResult<CrmCustomerDO> getCustomerPage(CrmCustomerPageReqVO pageReqVO, Long userId) {
-        return customerMapper.selectPage(pageReqVO, userId);
+        String md5Key = SecureUtil.md5(JSON.toJSONString(pageReqVO));
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(md5Key))) {
+            String value = String.valueOf(redisTemplate.opsForValue().get(md5Key));
+            return JSON.parseObject(value, new TypeReference<PageResult<CrmCustomerDO>>() {
+            });
+        } else {
+            PageResult<CrmCustomerDO> crmCustomerDOPageResult = customerMapper.selectPage(pageReqVO, userId);
+            String jsonStr = JSON.toJSONString(crmCustomerDOPageResult);
+            redisTemplate.opsForValue().set(md5Key, jsonStr, 30, TimeUnit.SECONDS);
+            return crmCustomerDOPageResult;
+        }
+
     }
 
     @Override
