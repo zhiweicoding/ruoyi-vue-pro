@@ -62,6 +62,8 @@ public class CrmFollowUpRecordDO extends BaseDO {
      * 跟进内容
      */
     private String content;
+
+//    private String followUpMsgStatus;
     /**
      * 下次联系时间
      */

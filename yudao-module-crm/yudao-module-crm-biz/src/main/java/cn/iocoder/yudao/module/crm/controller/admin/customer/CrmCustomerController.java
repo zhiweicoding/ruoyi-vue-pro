@@ -99,6 +99,16 @@ public class CrmCustomerController {
         return success(true);
     }
 
+    @DeleteMapping("/batchDelete")
+    @Operation(summary = "删除客户")
+    @PreAuthorize("@ss.hasPermission('crm:customer:delete')")
+    public CommonResult<Boolean> batchDeleteCustomer(@Valid @RequestBody List<Long> ids) {
+        for (Long id : ids) {
+            customerService.deleteCustomer(id);
+        }
+        return success(true);
+    }
+
     @GetMapping("/get")
     @Operation(summary = "获得客户")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")

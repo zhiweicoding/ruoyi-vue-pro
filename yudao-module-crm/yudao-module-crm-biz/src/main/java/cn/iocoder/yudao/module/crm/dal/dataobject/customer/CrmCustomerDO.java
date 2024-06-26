@@ -46,6 +46,8 @@ public class CrmCustomerDO extends BaseDO {
      * 最后跟进内容
      */
     private String contactLastContent;
+
+//    private String followUpMsgStatus;
     /**
      * 下次联系时间
      */
