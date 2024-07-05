@@ -16,6 +16,8 @@ import cn.iocoder.yudao.module.crm.util.CrmPermissionUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
@@ -30,6 +32,9 @@ import java.util.List;
  */
 @Mapper
 public interface CrmCustomerMapper extends BaseMapperX<CrmCustomerDO> {
+
+    @Select("SELECT COUNT(t.id) FROM `ruoyi-vue-pro`.crm_customer t WHERE MD5(t.mobile) = #{md5phone}")
+    long countByMd5Phone(@Param("md5phone") String md5phone);
 
     default Long selectCountByLockStatusAndOwnerUserId(Boolean lockStatus, Long ownerUserId) {
         return selectCount(new LambdaUpdateWrapper<CrmCustomerDO>()
