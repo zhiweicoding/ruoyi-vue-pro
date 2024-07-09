@@ -21,10 +21,13 @@ import cn.iocoder.yudao.module.system.api.dept.DeptApi;
 import cn.iocoder.yudao.module.system.api.dept.dto.DeptRespDTO;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
+import com.alibaba.fastjson.JSON;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +56,7 @@ import static java.util.Collections.singletonList;
 @Validated
 public class CrmCustomerController {
 
+    private static final Logger log = LoggerFactory.getLogger(CrmCustomerController.class);
     @Resource
     private CrmCustomerService customerService;
     @Resource
@@ -131,13 +135,20 @@ public class CrmCustomerController {
     @Operation(summary = "获得客户分页")
     @PreAuthorize("@ss.hasPermission('crm:customer:query')")
     public CommonResult<PageResult<CrmCustomerRespVO>> getCustomerPage(@Valid CrmCustomerPageReqVO pageVO) {
+        long star = System.currentTimeMillis();
+        log.info("获得客户分页 start ");
+
         // 1. 查询客户分页
         PageResult<CrmCustomerDO> pageResult = customerService.getCustomerPage(pageVO, getLoginUserId());
         if (CollUtil.isEmpty(pageResult.getList())) {
             return success(PageResult.empty(pageResult.getTotal()));
         }
+        log.info("query 客户分页 base cost {} s", (System.currentTimeMillis() - star));
+        log.debug("query 客户分页 data:{}", JSON.toJSONString(pageResult));
         // 2. 拼接数据
-        return success(new PageResult<>(buildCustomerDetailList(pageResult.getList()), pageResult.getTotal()));
+        CommonResult<PageResult<CrmCustomerRespVO>> success = success(new PageResult<>(buildCustomerDetailList(pageResult.getList()), pageResult.getTotal()));
+        log.info("获得客户分页 end cost {} s" , (System.currentTimeMillis() - star));
+        return success;
     }
 
     public List<CrmCustomerRespVO> buildCustomerDetailList(List<CrmCustomerDO> list) {
@@ -147,9 +158,12 @@ public class CrmCustomerController {
         // 1.1 获取创建人、负责人列表
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(convertSetByFlatMap(list,
                 contact -> Stream.of(NumberUtils.parseLong(contact.getCreator()), contact.getOwnerUserId())));
+        log.debug("获取创建人、负责人列表 userMap data:{}", JSON.toJSONString(userMap));
         Map<Long, DeptRespDTO> deptMap = deptApi.getDeptMap(convertSet(userMap.values(), AdminUserRespDTO::getDeptId));
+        log.debug("获取创建人、负责人列表 deptMap data:{}", JSON.toJSONString(deptMap));
         // 1.2 获取距离进入公海的时间
         Map<Long, Long> poolDayMap = getPoolDayMap(list);
+        log.debug("获取创建人、负责人列表 poolDayMap data:{}", JSON.toJSONString(poolDayMap));
         // 2. 转换成 VO
         return BeanUtils.toBean(list, CrmCustomerRespVO.class, customerVO -> {
             customerVO.setAreaName(AreaUtils.format(customerVO.getAreaId()));

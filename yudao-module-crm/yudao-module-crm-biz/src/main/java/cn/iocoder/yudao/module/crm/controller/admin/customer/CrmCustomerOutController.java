@@ -2,9 +2,7 @@ package cn.iocoder.yudao.module.crm.controller.admin.customer;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
-import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.module.crm.controller.admin.customer.vo.customer.CrmCustomerCheckOutReqVO;
-import cn.iocoder.yudao.module.crm.controller.admin.customer.vo.customer.CrmCustomerImportExcelVO;
 import cn.iocoder.yudao.module.crm.controller.admin.customer.vo.customer.CrmCustomerImportOutReqVO;
 import cn.iocoder.yudao.module.crm.service.customer.CrmCustomerOutService;
 import com.alibaba.fastjson.JSON;
@@ -18,11 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 
-import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.error;
+import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 @Tag(name = "管理后台 - CRM 客户")
 @RestController
