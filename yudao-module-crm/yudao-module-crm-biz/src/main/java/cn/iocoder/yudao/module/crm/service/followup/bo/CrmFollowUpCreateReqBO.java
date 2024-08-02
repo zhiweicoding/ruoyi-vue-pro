@@ -49,7 +49,7 @@ public class CrmFollowUpCreateReqBO {
     /**
      * 下次联系时间
      */
-    @NotNull(message = "下次联系时间不能为空")
+//    @NotNull(message = "下次联系时间不能为空")
     private LocalDateTime nextTime;
 
     /**

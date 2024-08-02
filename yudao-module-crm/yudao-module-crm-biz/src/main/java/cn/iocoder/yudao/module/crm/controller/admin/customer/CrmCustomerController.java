@@ -139,6 +139,7 @@ public class CrmCustomerController {
         log.info("获得客户分页 start ");
 
         // 1. 查询客户分页
+        BeanUtils.setEmptyStringFieldsToNull(pageVO);
         PageResult<CrmCustomerDO> pageResult = customerService.getCustomerPage(pageVO, getLoginUserId());
         if (CollUtil.isEmpty(pageResult.getList())) {
             return success(PageResult.empty(pageResult.getTotal()));
@@ -147,7 +148,7 @@ public class CrmCustomerController {
         log.debug("query 客户分页 data:{}", JSON.toJSONString(pageResult));
         // 2. 拼接数据
         CommonResult<PageResult<CrmCustomerRespVO>> success = success(new PageResult<>(buildCustomerDetailList(pageResult.getList()), pageResult.getTotal()));
-        log.info("获得客户分页 end cost {} s" , (System.currentTimeMillis() - star));
+        log.info("获得客户分页 end cost {} s", (System.currentTimeMillis() - star));
         return success;
     }
 

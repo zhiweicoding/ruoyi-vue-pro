@@ -31,9 +31,12 @@ public class CrmFollowUpRecordSaveReqVO {
     @NotEmpty(message = "跟进内容不能为空")
     private String content;
 
-    @Schema(description = "下次联系时间", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "下次联系时间不能为空")
+    @Schema(description = "下次联系时间")
+//    @NotNull(message = "下次联系时间不能为空")
     private LocalDateTime nextTime;
+
+    @Schema(description = "客户级别")
+    private String level;
 
     @Schema(description = "关联的商机编号数组")
     private List<Long> businessIds;

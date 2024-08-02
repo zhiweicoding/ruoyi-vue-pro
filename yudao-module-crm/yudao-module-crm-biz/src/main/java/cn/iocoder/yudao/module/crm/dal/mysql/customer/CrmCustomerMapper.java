@@ -64,6 +64,7 @@ public interface CrmCustomerMapper extends BaseMapperX<CrmCustomerDO> {
                 .likeIfPresent(CrmCustomerDO::getName, pageReqVO.getName())
                 .eqIfPresent(CrmCustomerDO::getMobile, pageReqVO.getMobile())
                 .eqIfPresent(CrmCustomerDO::getIndustryId, pageReqVO.getIndustryId())
+                .eqIfPresent(CrmCustomerDO::getOwnerUserId, pageReqVO.getOwnerUserId())
                 .eqIfPresent(CrmCustomerDO::getLevel, pageReqVO.getLevel())
                 .eqIfPresent(CrmCustomerDO::getSource, pageReqVO.getSource())
                 .eqIfPresent(CrmCustomerDO::getFollowUpStatus, pageReqVO.getFollowUpStatus());
@@ -114,8 +115,8 @@ public interface CrmCustomerMapper extends BaseMapperX<CrmCustomerDO> {
     }
 
     static MPJLambdaWrapperX<CrmCustomerDO> buildPutPoolRemindCustomerQuery(CrmCustomerPageReqVO pageReqVO,
-                                                                                    CrmCustomerPoolConfigDO poolConfig,
-                                                                                    Long ownerUserId) {
+                                                                            CrmCustomerPoolConfigDO poolConfig,
+                                                                            Long ownerUserId) {
         MPJLambdaWrapperX<CrmCustomerDO> query = new MPJLambdaWrapperX<>();
         // 拼接数据权限的查询条件
         CrmPermissionUtils.appendPermissionCondition(query, CrmBizTypeEnum.CRM_CUSTOMER.getType(),
@@ -137,10 +138,10 @@ public interface CrmCustomerMapper extends BaseMapperX<CrmCustomerDO> {
         query.and(q -> {
             // 情况一：成交超时提醒
             q.between(CrmCustomerDO::getOwnerTime, startDealRemindTime, endDealRemindTime)
-            // 情况二：跟进超时提醒
-            .or(w -> w.between(CrmCustomerDO::getOwnerTime, startContactRemindTime, endContactRemindTime)
-                    .and(p -> p.between(CrmCustomerDO::getContactLastTime, startContactRemindTime, endContactRemindTime)
-                            .or().isNull(CrmCustomerDO::getContactLastTime)));
+                    // 情况二：跟进超时提醒
+                    .or(w -> w.between(CrmCustomerDO::getOwnerTime, startContactRemindTime, endContactRemindTime)
+                            .and(p -> p.between(CrmCustomerDO::getContactLastTime, startContactRemindTime, endContactRemindTime)
+                                    .or().isNull(CrmCustomerDO::getContactLastTime)));
         });
         return query;
     }
@@ -161,10 +162,10 @@ public interface CrmCustomerMapper extends BaseMapperX<CrmCustomerDO> {
         query.and(q -> {
             // 情况一：成交超时
             q.lt(CrmCustomerDO::getOwnerTime, dealExpireTime)
-            // 情况二：跟进超时
-            .or(w -> w.lt(CrmCustomerDO::getOwnerTime, contactExpireTime)
-                    .and(p -> p.lt(CrmCustomerDO::getContactLastTime, contactExpireTime)
-                            .or().isNull(CrmCustomerDO::getContactLastTime)));
+                    // 情况二：跟进超时
+                    .or(w -> w.lt(CrmCustomerDO::getOwnerTime, contactExpireTime)
+                            .and(p -> p.lt(CrmCustomerDO::getContactLastTime, contactExpireTime)
+                                    .or().isNull(CrmCustomerDO::getContactLastTime)));
         });
         return selectList(query);
     }

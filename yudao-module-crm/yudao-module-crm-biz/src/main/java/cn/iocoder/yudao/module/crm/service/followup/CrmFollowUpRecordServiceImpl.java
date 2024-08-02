@@ -6,7 +6,9 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.crm.controller.admin.followup.vo.CrmFollowUpRecordPageReqVO;
 import cn.iocoder.yudao.module.crm.controller.admin.followup.vo.CrmFollowUpRecordSaveReqVO;
+import cn.iocoder.yudao.module.crm.dal.dataobject.customer.CrmCustomerDO;
 import cn.iocoder.yudao.module.crm.dal.dataobject.followup.CrmFollowUpRecordDO;
+import cn.iocoder.yudao.module.crm.dal.mysql.customer.CrmCustomerMapper;
 import cn.iocoder.yudao.module.crm.dal.mysql.followup.CrmFollowUpRecordMapper;
 import cn.iocoder.yudao.module.crm.enums.common.CrmBizTypeEnum;
 import cn.iocoder.yudao.module.crm.enums.permission.CrmPermissionLevelEnum;
@@ -18,7 +20,10 @@ import cn.iocoder.yudao.module.crm.service.contract.CrmContractService;
 import cn.iocoder.yudao.module.crm.service.customer.CrmCustomerService;
 import cn.iocoder.yudao.module.crm.service.followup.bo.CrmFollowUpCreateReqBO;
 import cn.iocoder.yudao.module.crm.service.permission.CrmPermissionService;
+
 import javax.annotation.Resource;
+
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -61,12 +66,19 @@ public class CrmFollowUpRecordServiceImpl implements CrmFollowUpRecordService {
     @Lazy
     private CrmCustomerService customerService;
 
+    @Resource
+    private CrmCustomerMapper customerMapper;
+
     @Override
     @CrmPermission(bizTypeValue = "#createReqVO.bizType", bizId = "#createReqVO.bizId", level = CrmPermissionLevelEnum.WRITE)
     public Long createFollowUpRecord(CrmFollowUpRecordSaveReqVO createReqVO) {
         // 1. 创建更进记录
         CrmFollowUpRecordDO record = BeanUtils.toBean(createReqVO, CrmFollowUpRecordDO.class);
         crmFollowUpRecordMapper.insert(record);
+
+        customerMapper.update(Wrappers.<CrmCustomerDO>lambdaUpdate()
+                .set(CrmCustomerDO::getLevel, createReqVO.getLevel())
+                .eq(CrmCustomerDO::getId, createReqVO.getBizId()));
 
         // 2. 更新 bizId 对应的记录
         if (ObjUtil.equal(CrmBizTypeEnum.CRM_CUSTOMER.getType(), record.getBizType())) { // 更新客户跟进信息

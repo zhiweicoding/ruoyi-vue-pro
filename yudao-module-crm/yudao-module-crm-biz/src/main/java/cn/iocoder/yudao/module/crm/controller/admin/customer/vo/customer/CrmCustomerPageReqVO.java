@@ -36,6 +36,9 @@ public class CrmCustomerPageReqVO extends PageParam {
     @Schema(description = "所属行业", example = "1")
     private Integer industryId;
 
+    @Schema(description = "负责的客服", example = "142")
+    private Long ownerUserId;
+
     @Schema(description = "客户等级", example = "1")
     private Integer level;
 

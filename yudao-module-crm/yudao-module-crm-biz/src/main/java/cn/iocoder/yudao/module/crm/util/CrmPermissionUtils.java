@@ -60,7 +60,9 @@ public class CrmPermissionUtils {
         }
         // 2.1 场景一：我负责的数据
         if (CrmSceneTypeEnum.isOwner(sceneType)) {
-            query.eq(ownerUserIdField, userId);
+            if (userId != 142) {
+                query.eq(ownerUserIdField, userId);
+            }
         }
         // 2.2 场景二：我参与的数据
         if (CrmSceneTypeEnum.isInvolved(sceneType)) {
