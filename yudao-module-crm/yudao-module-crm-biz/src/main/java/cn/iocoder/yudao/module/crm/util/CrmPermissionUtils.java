@@ -35,7 +35,7 @@ public class CrmPermissionUtils {
      */
     public static boolean isCrmAdmin() {
         PermissionApi permissionApi = SpringUtil.getBean(PermissionApi.class);
-        return permissionApi.hasAnyRoles(getLoginUserId(), RoleCodeEnum.CRM_ADMIN.getCode());
+        return permissionApi.hasAnyRoles(getLoginUserId(), RoleCodeEnum.CRM_ADMIN.getCode(), RoleCodeEnum.TENANT_ADMIN.getCode());
     }
 
     /**

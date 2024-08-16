@@ -58,4 +58,7 @@ public class CrmCustomerPageReqVO extends PageParam {
     @Schema(description = "跟进状态", example = "true")
     private Boolean followUpStatus;
 
+    @Schema(description = "是否锁定", example = "true")
+    private Boolean lockStatus;
+
 }

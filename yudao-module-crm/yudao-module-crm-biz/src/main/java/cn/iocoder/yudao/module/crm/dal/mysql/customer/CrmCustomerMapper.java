@@ -67,7 +67,9 @@ public interface CrmCustomerMapper extends BaseMapperX<CrmCustomerDO> {
                 .eqIfPresent(CrmCustomerDO::getOwnerUserId, pageReqVO.getOwnerUserId())
                 .eqIfPresent(CrmCustomerDO::getLevel, pageReqVO.getLevel())
                 .eqIfPresent(CrmCustomerDO::getSource, pageReqVO.getSource())
-                .eqIfPresent(CrmCustomerDO::getFollowUpStatus, pageReqVO.getFollowUpStatus());
+                .eqIfPresent(CrmCustomerDO::getLockStatus, pageReqVO.getLockStatus())
+                .eqIfPresent(CrmCustomerDO::getFollowUpStatus, pageReqVO.getFollowUpStatus())
+                .orderByDesc(CrmCustomerDO::getUpdateTime);
 
         // backlog 查询
         if (ObjUtil.isNotNull(pageReqVO.getContactStatus())) {

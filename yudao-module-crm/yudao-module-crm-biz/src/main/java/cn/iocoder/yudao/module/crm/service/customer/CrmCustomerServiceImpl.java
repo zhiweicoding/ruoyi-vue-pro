@@ -552,7 +552,7 @@ public class CrmCustomerServiceImpl implements CrmCustomerService {
         } else {
             PageResult<CrmCustomerDO> crmCustomerDOPageResult = customerMapper.selectPage(pageReqVO, userId);
             String jsonStr = JSON.toJSONString(crmCustomerDOPageResult);
-            redisTemplate.opsForValue().set(md5Key, jsonStr, 30, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(md5Key, jsonStr, 5, TimeUnit.SECONDS);
             return crmCustomerDOPageResult;
         }
 
