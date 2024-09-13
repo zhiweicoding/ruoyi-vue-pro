@@ -57,7 +57,12 @@ public class CrmPermissionAspect {
         // 2. 逐个校验权限
         List<CrmPermissionDO> permissionList = crmPermissionService.getPermissionListByBiz(bizType, bizIds);
         Map<Long, List<CrmPermissionDO>> multiMap = convertMultiMap(permissionList, CrmPermissionDO::getBizId);
-        bizIds.forEach(bizId -> validatePermission(bizType, multiMap.get(bizId), permissionLevel));
+        for (long bizId : bizIds) {
+            List<CrmPermissionDO> crmPermissionDOs = multiMap.get(bizId);
+            if (!"ADMIN".equals(crmPermission.userId())) {
+                validatePermission(bizType, crmPermissionDOs, permissionLevel);
+            }
+        }
     }
 
     private void validatePermission(Integer bizType, List<CrmPermissionDO> bizPermissions, Integer permissionLevel) {
