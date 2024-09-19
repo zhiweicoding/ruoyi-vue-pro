@@ -3,7 +3,10 @@ package cn.iocoder.yudao.module.crm.dal.mysql.permission;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.crm.dal.dataobject.permission.CrmPermissionDO;
+import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,12 +32,9 @@ public interface CrmPermissionMapper extends BaseMapperX<CrmPermissionDO> {
                 .eq(CrmPermissionDO::getBizId, bizId));
     }
 
-    default List<CrmPermissionDO> selectByBizTypeAndBizIdNotCheckDel(Integer bizType, Long bizId) {
-        return selectList(new LambdaQueryWrapperX<CrmPermissionDO>()
-                .eq(CrmPermissionDO::getDeleted, true)
-                .eq(CrmPermissionDO::getBizType, bizType)
-                .eq(CrmPermissionDO::getBizId, bizId));
-    }
+    @Select("SELECT id, biz_type, biz_id, user_id, level, create_time, update_time, creator, updater, deleted " +
+            "FROM crm_permission WHERE biz_type = #{bizType} AND biz_id = #{bizId}")
+    List<CrmPermissionDO> selectByBizTypeAndBizIdNotCheckDel(@Param("bizType") Integer bizType, @Param("bizId") Long bizId);
 
     default List<CrmPermissionDO> selectByBizTypeAndBizIds(Integer bizType, Collection<Long> bizIds) {
         return selectList(new LambdaQueryWrapperX<CrmPermissionDO>()
