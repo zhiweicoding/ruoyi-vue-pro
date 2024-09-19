@@ -29,6 +29,13 @@ public interface CrmPermissionMapper extends BaseMapperX<CrmPermissionDO> {
                 .eq(CrmPermissionDO::getBizId, bizId));
     }
 
+    default List<CrmPermissionDO> selectByBizTypeAndBizIdNotCheckDel(Integer bizType, Long bizId) {
+        return selectList(new LambdaQueryWrapperX<CrmPermissionDO>()
+                .eq(CrmPermissionDO::getDeleted, true)
+                .eq(CrmPermissionDO::getBizType, bizType)
+                .eq(CrmPermissionDO::getBizId, bizId));
+    }
+
     default List<CrmPermissionDO> selectByBizTypeAndBizIds(Integer bizType, Collection<Long> bizIds) {
         return selectList(new LambdaQueryWrapperX<CrmPermissionDO>()
                 .eq(CrmPermissionDO::getBizType, bizType)

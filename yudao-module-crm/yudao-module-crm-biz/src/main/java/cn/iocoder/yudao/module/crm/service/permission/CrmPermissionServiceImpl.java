@@ -215,7 +215,7 @@ public class CrmPermissionServiceImpl implements CrmPermissionService {
             if (!CrmPermissionUtils.isCrmAdmin()) {
                 throw exception(CRM_PERMISSION_DENIED, bizTypeName);
             } else {
-                List<CrmPermissionDO> permissions = permissionMapper.selectByBizTypeAndBizId(
+                List<CrmPermissionDO> permissions = permissionMapper.selectByBizTypeAndBizIdNotCheckDel(
                         transferReqBO.getBizType(), transferReqBO.getBizId());
                 if (permissions.isEmpty()) {
                     throw exception(CRM_PERMISSION_DENIED, bizTypeName);
